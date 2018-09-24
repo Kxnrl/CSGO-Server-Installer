@@ -20,7 +20,7 @@ public Plugin myinfo =
 
 static char g_szServerIP[24];
 
-enum Function
+enum astralis
 {
     fncServer_Start = 0,
     fncMap_Start,
@@ -55,7 +55,7 @@ public void OnPluginStart()
     FormatEx(url, 192, "%s?action=server&host=%s&port=%d", REMOTE_SERVER, g_szServerIP, hostport.IntValue);
     System2HTTPRequest hRequest = new System2HTTPRequest(System2Callback, url);
     hRequest.Timeout = 60;
-    hRequest.Any = fncStart_Start,
+    hRequest.Any = fncServer_Start,
     hRequest.GET();
     delete hRequest;
 }
