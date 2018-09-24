@@ -8,7 +8,7 @@
 /*                                                                */
 /*                                                                */
 /*  Copyright (C) 2018  Kyle                                      */
-/*  2018/09/23 10:54:56                                           */
+/*  2018/09/24 04:43:15                                           */
 /*                                                                */
 /*  This program is licensed under the MIT License.               */
 /*                                                                */
@@ -25,15 +25,15 @@ namespace Kxnrl.CSI.Win32Api
     {
         public static void CreateShortcut()
         {
-            var lnkpath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Server Installer.lnk";
+            string lnkpath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Server Installer.lnk";
 
             if(System.IO.File.Exists(lnkpath))
             {
                 return;
             }
 
-            var shell = new WshShell();
-            var shortcut = (IWshShortcut)shell.CreateShortcut(lnkpath);
+            WshShell shell = new WshShell();
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(lnkpath);
 
             shortcut.Description = "CSGO Server Installer";
             //shortcut.Hotkey = "Ctrl+Shift+C";

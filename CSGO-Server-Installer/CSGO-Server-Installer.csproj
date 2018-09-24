@@ -66,6 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Installtion\Addons.cs" />
+    <Compile Include="Installtion\Applications.cs" />
+    <Compile Include="Installtion\Extensions.cs" />
+    <Compile Include="Installtion\Plugins.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -73,6 +78,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SRCDS.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Win32Api.cs" />
   </ItemGroup>

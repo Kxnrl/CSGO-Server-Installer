@@ -8,7 +8,7 @@
 /*                                                                */
 /*                                                                */
 /*  Copyright (C) 2018  Kyle                                      */
-/*  2018/09/23 10:54:56                                           */
+/*  2018/09/24 04:43:15                                           */
 /*                                                                */
 /*  This program is licensed under the MIT License.               */
 /*                                                                */
@@ -48,18 +48,18 @@ namespace Kxnrl.CSI
                     if (!Directory.Exists(Global.AppPath))
                     {
                         Directory.CreateDirectory(Global.AppPath);
-                        Console.WriteLine("创建 '" + Global.AppPath + "' 成功.");
+                        Global.Print("创建 '" + Global.AppPath + "' 成功.");
                     }
 
                     // 复制文件
                     File.Copy(Application.StartupPath + "\\CSGO-Server-Installer.exe", Global.AppPath + "\\CSGO-Server-Installer.exe", true);
-                    Console.WriteLine("安装 '" + Global.AppPath + "\\CSGO-Server-Installer.exe' 成功.");
+                    Global.Print("安装 '" + Global.AppPath + "\\CSGO-Server-Installer.exe' 成功.");
                 }
                 catch (Exception e)
                 {
                     // 挂起这个错误, 确认后直接退出
-                    Console.WriteLine("安装 'CSGO-Server-Installer.exe' 失败.");
-                    Console.WriteLine("错误: " + e.Message);
+                    Global.Print("安装 'CSGO-Server-Installer.exe' 失败.");
+                    Global.Print("错误: " + e.Message);
                     Console.ReadLine();
                     Environment.Exit(-1);
                 }
@@ -75,41 +75,33 @@ namespace Kxnrl.CSI
                 Environment.Exit(0);
             }
 
+            // 初始化
+            Global.Init();
+
             // 删除自删脚本
-            if (File.Exists(Global.AppPath + "\\start.bat"))
-            {
-                try
-                {
-                    File.Delete(Global.AppPath + "\\start.bat");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("删除 'start.bat' 失败.");
-                    Console.WriteLine("错误: " + e.Message);
-                }
-            }
+            Util.DeleteScript();
 
             // 检查是否安装SteamCmd
-            Util.CheckSteam();
+            Helper.CheckSteam();
 
             // 检查是否有7zip CLI
-            Util.Check7zip();
+            Helper.Check7zip();
 
             // 刷新控制台
             welcome:
-            Util.ConsoleRefresh();
+            Helper.ConsoleRefresh();
 
             // 欢迎消息
-            Util.WelcomeMessage();
+            Helper.WelcomeMessage();
 
             // 继续刷刷刷
-            Util.ConsoleRefresh();
+            Helper.ConsoleRefresh();
 
             // 询问是否要建立服务器, 使用死循环方法. 只有关掉或特殊按键才能终止
             do
             {
                 Console.WriteLine("你要安装新的CSGO服务端吗? [Y/N] (按下ESC可以退出程序)");
-                var key = Console.ReadKey().Key;
+                ConsoleKey key = Console.ReadKey().Key;
                 switch (key)
                 {
                     case ConsoleKey.N     : goto welcome;
@@ -122,10 +114,10 @@ namespace Kxnrl.CSI
 
             // 选择要安装的文件夹
             selectFolder:
-            string targetFolder;
+            string srcds;
             do
             {
-                using (var browser = new FolderBrowserDialog())
+                using (FolderBrowserDialog browser = new FolderBrowserDialog())
                 {
                     browser.Description = "选择你想要安装的路径" + Environment.NewLine + "如果没有就创建一个新的吧";
                     browser.ShowNewFolderButton = true;
@@ -136,7 +128,7 @@ namespace Kxnrl.CSI
                             MessageBox.Show("非法路径!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             continue;
                         }
-                        targetFolder = browser.SelectedPath;
+                        srcds = browser.SelectedPath;
                         goto startSteam;
                     }
                 }
@@ -145,11 +137,11 @@ namespace Kxnrl.CSI
 
             // Start steam to download
             startSteam:
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.EnableRaisingEvents = true;
                 process.StartInfo.FileName = Global.AppPath + "\\Steam\\steamcmd.exe";
-                process.StartInfo.Arguments = "+login anonymous +force_install_dir \"" + targetFolder + "\" " + "+app_update 740 +exit";
+                process.StartInfo.Arguments = "+login anonymous +force_install_dir \"" + srcds + "\" " + "+app_update 740 +exit";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.RedirectStandardInput = true;
@@ -159,47 +151,54 @@ namespace Kxnrl.CSI
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
 
-                Util.ConsoleRefresh();
-                Console.WriteLine("正在安装 CS:GO Dedicated Server 到 '" + targetFolder + "' ...");
+                Helper.ConsoleRefresh();
+                Global.Print("正在安装 CS:GO Dedicated Server 到 '" + srcds + "' ...");
 
-                process.OutputDataReceived += (sender, e) => { Console.WriteLine(e.Data); };
-                process.ErrorDataReceived += (sender, e) => { Console.WriteLine(e.Data); };
+                process.OutputDataReceived += (sender, e) => { Global.Print(e.Data); };
+                process.ErrorDataReceived += (sender, e) => { Global.Print(e.Data); };
 
                 process.WaitForExit();
             }
 
             // clr
-            Util.ConsoleRefresh();
+            Helper.ConsoleRefresh();
 
-            // MetaMod & SourcMmod
-            Console.WriteLine("安装 CS:GO Dedicated Server 成功 ...");
-            Console.WriteLine("安装目录 '" + targetFolder + "' .");
+            // 等待Steam下载完毕
+            Global.Print("安装 CS:GO Dedicated Server 成功 ...");
+            Global.Print("安装目录 '" + srcds + "' .");
+
+            // 安装MetaMod & SourceMod
             Console.WriteLine("按下任意键继续 -> 下载服务器附加组件 MetaMod & SourcMmod ...");
             Console.ReadKey();
+            Installtion.Addons.MetaMod(srcds);
+            Installtion.Addons.SourceMod(srcds);
+            Global.Print("安装 MetaMod & SourceMod 成功 ...");
 
-            // SourceMod Extensions
-            for(int i = 0; i < 3; ++i) Util.DownloadAddons(targetFolder);
-            Console.WriteLine("安装 MetaMod & SourceMod 成功 ...");
+            // 安装SourceMod Extensions
             Console.WriteLine("按下任意键继续 -> 下载服务器附加组件 SourceMod Extensions ...");
             Console.ReadKey();
+            Installtion.Extensions.System2(srcds);
+            Installtion.Extensions.SoundLib(srcds);
+            Installtion.Extensions.PTaH(srcds);
+            Installtion.Extensions.Accelerator(srcds);
+            Installtion.Extensions.SteamWorks(srcds);
+            Installtion.Extensions.DHooks(srcds);
+            Global.Print("安装 SourceMod Extensions 成功 ...");
 
-            // SourceMod Base Plugins
-            Util.DownloadExtensions(targetFolder);
-            Console.WriteLine("安装 SourceMod Extensions 成功 ...");
+            // 安装SourceMod Base Plugins
             Console.WriteLine("按下任意键继续 -> 下载服务器附加组件 SourceMod Base Plugins ...");
             Console.ReadKey();
-
-            // SourceMod Game Mod Plugins
-            Util.DownloadBasePlugin(targetFolder);
-            Console.WriteLine("安装 SourceMod Base Plugins 成功 ...");
-            Console.WriteLine("按下任意键继续 -> 下载服务器附加组件 SourceMod Game Mod Plugins ...");
-            Console.ReadKey();
+            Installtion.Plugins.CSI.Hostname(srcds);
+            Installtion.Plugins.CSI.Analytics(srcds);
+            Global.Print("安装 SourceMod Base Plugins 成功 ...");
 
             // 询问游戏模式, 使用死循环方法. 只有关掉或特殊按键才能终止
+            Console.WriteLine("按下任意键继续 -> 下载服务器附加组件 SourceMod Game Mod Plugins ...");
+            Console.ReadKey();
             do
             {
-                Util.ConsoleRefresh();
-                Console.WriteLine("请选择您想要运行的游戏模式: (我们会为您安装好对于模式相应的组件)");
+                Helper.ConsoleRefresh();
+                Console.WriteLine("请选择您想要运行的游戏模式: (我们会为您安装好对于模式相应的组件)" + Environment.NewLine);
                 Console.WriteLine("\t1. TT 叛徒模式/匪镇谍影");
                 Console.WriteLine("\t2. ZE 僵尸逃跑");
                 Console.WriteLine("\t3. MG 娱乐休闲/娱乐对抗/娱乐世界");
@@ -214,23 +213,23 @@ namespace Kxnrl.CSI
                 Console.WriteLine("\tN. 返回主目录");
                 Console.WriteLine("\tE. 退出程序");
 
-                var key = Console.ReadKey().Key;
+                ConsoleKey key = Console.ReadKey().Key;
                 switch (key)
                 {
-                    case ConsoleKey.N     : goto welcome;
-                    case ConsoleKey.Y     : goto doneGamemode;
-                    case ConsoleKey.Escape: Environment.Exit(0);           break;
-                    case ConsoleKey.E     : Environment.Exit(0);           break;
-                    case ConsoleKey.D1    : Util.Install_TT(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D2    : Util.Install_ZE(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D3    : Util.Install_MG(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D4    : Util.Install_KZ(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D5    : Util.Install_SR(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D6    : Util.Install_BH(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D7    : Util.Install_PG(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D8    : Util.Install_DM(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D9    : Util.Install_JB(targetFolder); goto doneGamemode;
-                    case ConsoleKey.D0    : Util.Install_PB(targetFolder); goto doneGamemode;
+                    case ConsoleKey.N     :                           goto welcome;
+                    case ConsoleKey.Y     :                           goto doneGamemode;
+                    case ConsoleKey.Escape: Environment.Exit(0);      break;
+                    case ConsoleKey.E     : Environment.Exit(0);      break;
+                    case ConsoleKey.D1    : Helper.Install_TT(srcds); goto doneGamemode;
+                    case ConsoleKey.D2    : Helper.Install_ZE(srcds); goto doneGamemode;
+                    case ConsoleKey.D3    : Helper.Install_MG(srcds); goto doneGamemode;
+                    case ConsoleKey.D4    : Helper.Install_KZ(srcds); goto doneGamemode;
+                    case ConsoleKey.D5    : Helper.Install_SR(srcds); goto doneGamemode;
+                    case ConsoleKey.D6    : Helper.Install_BH(srcds); goto doneGamemode;
+                    case ConsoleKey.D7    : Helper.Install_PG(srcds); goto doneGamemode;
+                    case ConsoleKey.D8    : Helper.Install_DM(srcds); goto doneGamemode;
+                    case ConsoleKey.D9    : Helper.Install_JB(srcds); goto doneGamemode;
+                    case ConsoleKey.D0    : Helper.Install_PB(srcds); goto doneGamemode;
                     default: continue;
                 }
             }
@@ -238,34 +237,69 @@ namespace Kxnrl.CSI
 
             // OK
             doneGamemode:
-            Util.ConsoleRefresh();
+            Helper.ConsoleRefresh();
 
             // 是否安装CSM?
             do
             {
                 Console.WriteLine("你要安装CSGO服务器管理器吗? [Y/N] (按下ESC可以退出程序)");
-                var key = Console.ReadKey().Key;
+                ConsoleKey key = Console.ReadKey().Key;
                 switch (key)
                 {
                     case ConsoleKey.N     : goto doneCSM;
-                    case ConsoleKey.Y     : Util.Install_App_CSM(targetFolder); goto doneCSM;
+                    case ConsoleKey.Y     : Installtion.Applications.CSM(srcds); goto doneCSM;
                     case ConsoleKey.Escape: Environment.Exit(0); break;
                     default: continue;
                 }
             }
             while (true);
 
-            // OK
-            doneCSM:
-            Util.ConsoleRefresh();
-
             // Well done
-            Process.Start("explorer.exe \"" + targetFolder + "\"");
+            doneCSM:
+            Helper.ConsoleRefresh();
+
+            // 自动处理SM设置
+            SRCDS.Initialization.SourceMod.CoreCfg(srcds);
+            SRCDS.Initialization.SourceMod.SourcemodCfg(srcds);
+
+            // 服务器名称设定
+            SRCDS.Initialization.SourceMod.HostnameCfg(srcds);
+
+            // 初始化Server.cfg
+            SRCDS.Initialization.Server.ServerCfg(srcds);
+
+            // 初始化SimpleAdmin
+            SRCDS.Initialization.SourceMod.SimpleAdmionIni(srcds);
+
+            // 是否使用CSM启动服务器
+            if (File.Exists(srcds + "\\CSGO-Server-Manager.exe"))
+            {
+                if (MessageBox.Show("需要现在唤起CSM来启动服务器吗?", "CSGO Server Installer", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
+                {
+                    Process.Start(
+                        new ProcessStartInfo()
+                        {
+                            FileName = srcds + "\\CSGO-Server-Manager.exe",
+                            WorkingDirectory = srcds
+                        }
+                    );
+                    goto alldone;
+                }
+            }
+
+            // 打开服务器路径
+            Process.Start("explorer.exe", " \"" + srcds + "\" ");
+
+            // all done
+            alldone:
 
             Console.WriteLine("安装好了 ...");
-            Console.WriteLine("按下任意键将会退出程序...");
+            Console.WriteLine("按下任意键将会退出程序 ...");
 
             Console.ReadKey();
+
+            // 打开日志
+            Process.Start(Global.AppPath + "\\Notepad\\Notepad++.exe", " \"" + Global.AppPath + "\\console.log\" ");
         }
     }
 }
