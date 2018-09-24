@@ -16,7 +16,9 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Kxnrl.CSI.Installtion
 {
@@ -28,7 +30,7 @@ namespace Kxnrl.CSI.Installtion
             {
                 if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\CSI-hostname.smx"))
                 {
-                    Global.Print("'CSI-hostname.smx' 安装成功.");
+                    Global.Print("'CSI-hostname.smx' 已安装.");
                     return;
                 }
 
@@ -51,11 +53,11 @@ namespace Kxnrl.CSI.Installtion
             {
                 if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\CSI-analytics.smx"))
                 {
-                    Global.Print("'CSI-analytics.smx' 安装成功.");
+                    Global.Print("'CSI-analytics.smx' 已安装.");
                     return;
                 }
 
-                // donload hostname
+                // donload analytics
                 try
                 {
                     Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/base/CSI-analytics.smx", path + "\\csgo\\addons\\sourcemod\\plugins\\CSI-analytics.smx");
@@ -101,6 +103,116 @@ namespace Kxnrl.CSI.Installtion
 
                 Thread.Sleep(3000);
             }
+
+            public static void ArmsFix(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\ArmsFix.smx"))
+                {
+                    Global.Print("'ArmsFix.smx' 已安装.");
+                    return;
+                }
+
+                // donload ArmsFix
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/ArmsFix/ArmsFix.smx", path + "\\csgo\\addons\\sourcemod\\plugins\\ArmsFix.smx");
+                    Global.Print("'ArmsFix.smx' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'ArmsFix.smx' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+
+                Thread.Sleep(3000);
+            }
+
+            public static void entWatch(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\entWatch.smx"))
+                {
+                    Global.Print("'entWatch.smx' 已安装.");
+                    return;
+                }
+
+                // donload entWatch
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/entWatch/entWatch.7z", path + "\\csgo\\addons\\entWatch.7z", "entWatch.7z");
+                    Util.ExtractFile(path + "\\csgo\\addons\\entWatch.7z", path + "\\csgo");
+                    Global.Print("'entWatch' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'entWatch.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\entWatch.7z");
+                }
+
+                Thread.Sleep(3000);
+            }
+
+            public static void MapMusic(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\MapMusic.smx"))
+                {
+                    Global.Print("'MapMusic' 已安装.");
+                    return;
+                }
+
+                // donload entWatch
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/MapMusic/MapMusic.7z", path + "\\csgo\\addons\\MapMusic.7z", "MapMusic.7z");
+                    Util.ExtractFile(path + "\\csgo\\addons\\MapMusic.7z", path + "\\csgo");
+                    Global.Print("'MapMusic' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'MapMusic.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\MapMusic.7z");
+                }
+
+                Thread.Sleep(3000);
+            }
+
+            public static void ZombiEscape(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\zombiereloaded.smx"))
+                {
+                    Global.Print("'ZombiEscape' 已安装.");
+                    return;
+                }
+
+                // donload ZombiEscape
+                try
+                {
+                    Util.DownloadFile("https://yukiim.kxnrl.com/csi/packages/ZombiEscape.7z", path + "\\csgo\\addons\\ZombiEscape.zip", "ZombiEscape.zip");
+                    Util.ExtractFile(path + "\\csgo\\addons\\ZombiEscape.zip", path + "\\csgo");
+                    Global.Print("'ZombiEscape' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'ZombiEscape.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\ZombiEscape.7z");
+                }
+
+                Thread.Sleep(3000);
+            }
         }
 
         public class Shanapu
@@ -116,7 +228,7 @@ namespace Kxnrl.CSI.Installtion
                 // download MyJB
                 try
                 {
-                    Util.DownloadFile("http://shanapu.de/MyJailbreak/downloads/SM1.9/MyJB-master-latest.zip", target + "\\csgo\\addons\\sourcemod\\MyJailbreak.zip", "MyJailbreak.zip");
+                    Util.DownloadFile("https://shanapu.de/MyJailbreak/downloads/SM1.9/MyJB-master-latest.zip", target + "\\csgo\\addons\\sourcemod\\MyJailbreak.zip", "MyJailbreak.zip");
                     Util.ExtractFile(target + "\\csgo\\addons\\sourcemod\\MyJailbreak.zip", target + "\\csgo\\addons\\sourcemod\\temp");
 
                     if (Directory.Exists(target + "\\csgo\\addons\\sourcemod\\temp\\gameserver"))
@@ -183,6 +295,122 @@ namespace Kxnrl.CSI.Installtion
                     // 删除所有多余文件.
                     Util.SafeDeleteFile(path + "\\csgo\\addons\\sourcemod\\sm_hosties.zip");
                 }
+            }
+
+            public static void csgo_movement_unlocker(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\csgo_movement_unlocker.smx"))
+                {
+                    Global.Print("'csgo_movement_unlocker' 已安装.");
+                    return;
+                }
+
+                // donload csgo_movement_unlocker
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/Alliedmodders/csgo_movement_unlocker.7z", path + "\\csgo\\addons\\csgo_movement_unlocker.7z", "csgo_movement_unlocker.7z");
+                    Util.ExtractFile(path + "\\csgo\\addons\\csgo_movement_unlocker.7z", path + "\\csgo");
+                    Global.Print("'csgo_movement_unlocker' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'csgo_movement_unlocker.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\csgo_movement_unlocker.7z");
+                }
+
+                Thread.Sleep(3000);
+            }
+
+            public static void napalmlagfix(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\napalmlagfix.smx"))
+                {
+                    Global.Print("'napalmlagfix' 已安装.");
+                    return;
+                }
+
+                // donload napalmlagfix
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/Alliedmodders/napalmlagfix.7z", path + "\\csgo\\addons\\napalmlagfix.7z", "napalmlagfix.7z");
+                    Util.ExtractFile(path + "\\csgo\\addons\\napalmlagfix.7z", path + "\\csgo");
+                    Global.Print("'napalmlagfix' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'napalmlagfix.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\napalmlagfix.7z");
+                }
+
+                Thread.Sleep(3000);
+            }
+
+            public static void ruleshax(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\ruleshax.smx"))
+                {
+                    Global.Print("'ruleshax' 已安装.");
+                    return;
+                }
+
+                // donload ruleshax
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/Alliedmodders/ruleshax.7z", path + "\\csgo\\addons\\ruleshax.7z", "ruleshax.7z");
+                    Util.ExtractFile(path + "\\csgo\\addons\\ruleshax.7z", path + "\\csgo");
+                    Global.Print("'ruleshax' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'ruleshax.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\ruleshax.7z");
+                }
+
+                Thread.Sleep(3000);
+            }
+
+            public static void voiceannounce_ex(string path)
+            {
+                if (File.Exists(path + "\\csgo\\addons\\sourcemod\\plugins\\voiceannounce_ex.smx"))
+                {
+                    Global.Print("'voiceannounce_ex' 已安装.");
+                    return;
+                }
+
+                // donload voiceannounce_ex
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/plugins/Alliedmodders/voiceannounce_ex.7z", path + "\\csgo\\addons\\voiceannounce_ex.7z", "voiceannounce_ex.7z");
+                    Util.ExtractFile(path + "\\csgo\\addons\\voiceannounce_ex.7z", path + "\\csgo");
+                    Global.Print("'voiceannounce_ex' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'voiceannounce_ex.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\voiceannounce_ex.7z");
+                }
+
+                Thread.Sleep(3000);
             }
         }
     }

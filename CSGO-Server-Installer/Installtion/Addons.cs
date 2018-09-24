@@ -76,5 +76,31 @@ namespace Kxnrl.CSI.Installtion
 
             Thread.Sleep(3000);
         }
+
+        public static void Stripper(string path)
+        {
+            // 尚未安装SourceMod
+            if (!Directory.Exists(path + "\\csgo\\addons\\stripper"))
+            {
+                try
+                {
+                    Util.DownloadFile("https://static.kxnrl.com/CSI/addons/Stripper/Stripper.7z", path + "\\csgo\\addons\\stripper.7z", "stripper.7z");
+                    Util.ExtractFile(path + "\\csgo\\addons\\stripper.7z", path + "\\csgo");
+                    Global.Print("'Stripper' 安装成功.");
+                }
+                catch (Exception e)
+                {
+                    Global.Print("下载 'stripper.7z' 失败.");
+                    Global.Print("错误: " + e.Message);
+                }
+                finally
+                {
+                    // 删除安装包
+                    Util.SafeDeleteFile(path + "\\csgo\\addons\\stripper.7z");
+                }
+            }
+
+            Thread.Sleep(3000);
+        }
     }
 }

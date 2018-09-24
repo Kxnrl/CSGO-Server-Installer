@@ -180,11 +180,11 @@ namespace Kxnrl.CSI
             }
         }
 
-        public static void ExtractFile(string source, string target)
+        public static void ExtractFile(string source, string target, bool print = true)
         {
             try
             {
-                Global.Print("正在解压 '" + source + "' -> '" + target + "'.");
+                Global.Print("正在解压: '" + source + "' -> '" + target + "'.");
 
                 using (Process proc = new Process())
                 {
@@ -203,11 +203,16 @@ namespace Kxnrl.CSI
                     proc.StandardInput.WriteLine(Global.AppPath + "\\7zip\\7za.exe x \"" + source + "\" -o\"" + target + "\" -y &exit");
                     proc.StandardInput.AutoFlush = true;
 
-                    proc.OutputDataReceived += (sender, e) => { Global.Print(e.Data); };
-                    proc.ErrorDataReceived += (sender, e) => { Global.Print(e.Data); };
+                    if (print)
+                    {
+                        proc.OutputDataReceived += (sender, e) => { Global.Print(e.Data); };
+                        proc.ErrorDataReceived += (sender, e) => { Global.Print(e.Data); };
+                    }
 
                     proc.WaitForExit();
                 }
+
+                Global.Print("解完完成: '" + source + "' -> '" + target + "'.");
             }
             catch (Exception e)
             {

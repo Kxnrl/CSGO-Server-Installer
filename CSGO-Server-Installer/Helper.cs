@@ -113,16 +113,50 @@ namespace Kxnrl.CSI
 
         public static void Install_ZE(string path)
         {
+            // Stripper
+            Installtion.Addons.Stripper(path);
+
             // 换图插件
             Installtion.Plugins.Kxnrl.MapChooserRedux(path);
 
-            Console.WriteLine("该模式即将上线. 敬请期待 ...");
+            // ArmsFix
+            Installtion.Plugins.Kxnrl.ArmsFix(path);
+
+            // entWatch
+            Installtion.Plugins.Kxnrl.entWatch(path);
+
+            // MapMusic
+            Installtion.Plugins.Kxnrl.MapMusic(path);
+
+            // Alliedmodders组件
+            Installtion.Plugins.Alliedmodders.csgo_movement_unlocker(path);
+            Installtion.Plugins.Alliedmodders.napalmlagfix(path);
+            Installtion.Plugins.Alliedmodders.ruleshax(path);
+            Installtion.Plugins.Alliedmodders.voiceannounce_ex(path);
+
+            // 僵尸逃跑组件
+            Installtion.Plugins.Kxnrl.ZombiEscape(path);
+
+            // 地图包?
+            Installtion.Maps.ZombiEscape.Download(path);
         }
 
         public static void Install_MG(string path)
         {
+            // Stripper
+            //Installtion.Addons.Stripper(path);
+
             // 换图插件
-            Installtion.Plugins.Kxnrl.MapChooserRedux(path);
+            //Installtion.Plugins.Kxnrl.MapChooserRedux(path);
+
+            // MapMusic
+            //Installtion.Plugins.Kxnrl.MapMusic(path);
+
+            // Alliedmodders组件
+            //Installtion.Plugins.Alliedmodders.csgo_movement_unlocker(path);
+
+            // MiniGames组件
+            //Installtion.Plugins.Kxnrl.MiniGames(path);
 
             Console.WriteLine("该模式即将上线. 敬请期待 ...");
         }

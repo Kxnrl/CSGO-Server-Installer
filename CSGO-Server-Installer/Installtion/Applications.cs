@@ -70,7 +70,7 @@ namespace Kxnrl.CSI.Installtion
         {
             if (File.Exists(path + "\\CSGO-Server-Manager.exe"))
             {
-                Global.Print("'CSGO-Server-Manager.exe' 安装成功.");
+                Global.Print("'CSGO-Server-Manager.exe' 已安装.");
                 return;
             }
 

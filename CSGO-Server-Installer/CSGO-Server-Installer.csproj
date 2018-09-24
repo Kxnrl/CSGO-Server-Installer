@@ -70,6 +70,7 @@
     <Compile Include="Installtion\Addons.cs" />
     <Compile Include="Installtion\Applications.cs" />
     <Compile Include="Installtion\Extensions.cs" />
+    <Compile Include="Installtion\Maps.cs" />
     <Compile Include="Installtion\Plugins.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -112,6 +113,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
